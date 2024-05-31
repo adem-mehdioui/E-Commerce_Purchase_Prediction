@@ -2,14 +2,36 @@ import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
 import plotly.express as px
-
+import joblib
 
 def main():
     
     st.title('E-commerce Dataset Visualization')
 
-    # Add some text
+        # Add some text
     st.write('Objectif : Analyse des tendances de vente des produits sur notre site E-commerce')
+
+# Data preprocessing steps
+    preprocessing_steps = [
+        
+        "Count number of Missing values",
+        "Replace Nan and missing values",
+        "Check if there are duplicate values then removing them",
+        "divide category_code into 4 sub_categories",
+        "convert column event_time to date and hour",
+        "Saving the cleaned dataframe"
+
+    ]
+
+    # Display header
+    st.header("Pré-traitement de données collectées")
+
+    # Display bullet points of preprocessing steps
+    st.write("Les étapes de pré-traitement des données collectées:")
+    st.write("- " + "\n- ".join(preprocessing_steps))
+
+
+
     
     # Load the dataset
     df = pd.read_csv('Cleaned_data.csv', sep=",")
@@ -110,6 +132,43 @@ def main():
 
 
 
+# Prediction Section
+    st.header('Purchase Prediction')
+
+    
+
+    # Load the trained model
+    try:
+        model = joblib.load('decision_tree_model.joblib')
+
+        # Input user_id and product_id for prediction
+        user_id = st.text_input('Enter user ID')
+        product_id = st.text_input('Enter product ID')
+
+        if st.button('Predict'):
+            if user_id and product_id:
+                # Ensure the columns exist in the DataFrame
+                if 'p_views' in df.columns and 'p_carts' in df.columns and 'p_purchases' in df.columns:
+                    user_data = df[(df['user_id'] == user_id) & (df['product_id'] == product_id)][['p_views', 'p_carts', 'p_purchases']]
+                    if not user_data.empty:
+                        prediction = model.predict(user_data)
+                        probability = model.predict_proba(user_data)[:, 1]
+                        result = 'Purchase' if prediction[0] == 1 else 'No Purchase'
+                        st.write(f"Prediction for user ID {user_id} and product ID {product_id}: {result}")
+                        st.write(f"Probability: {probability[0]:.2f}")
+                    else:
+                        st.write(f"No data available for user ID {user_id} and product ID {product_id}")
+                else:
+                    st.write("The user will not buy the selected product.")
+            else:
+                st.write("Please enter both user ID and product ID")
+    except FileNotFoundError:
+        st.write("Model not found. Please ensure the model has been trained and saved correctly.")
+
+    st.header("Conclusion :")
+    st.write("- Les résultats montrent que le modèle a une performance décente avec un AUC de 0.75, ce qui indique une bonne capacité de distinction entre les classes")
+    st.write("- Précision de la classe 0 (non-achat) est meilleure que le rappel, ce qui signifie que lorsque le modèle prédit un non-achat, il est souvent correct, mais il manque de nombreux vrais non-achats")
+    st.write("- Rappel de la classe 1 (achat) est élevé, ce qui signifie que le modèle identifie correctement la plupart des achats, mais la précision est plus faible, indiquant un certain nombre de faux positifs.")
 
 
 
@@ -141,16 +200,19 @@ st.markdown(
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.image('members_photos/adem.jpg', caption='Data Analyst / Data Scientist', use_column_width=True)
+    st.image('adem.jpg', caption='Data Analyst / Data Scientist', use_column_width=True)
     st.write('MEHDIOUI Mohamed Adem')
 
 with col2:
-    st.image('members_photos/soulayman.jpg', caption='Data Analyst / Data Scientist', use_column_width=True)
+    st.image('soulayman.jpg', caption='Data Analyst / Data Scientist', use_column_width=True)
     st.write('EL GUASMI Soulaymane')
 
 with col3:
-    st.image('members_photos/yassine.jpg', caption='Coordinateur de projet', use_column_width=True)
+    st.image('yassine.jpg', caption='Coordinateur de Projet', use_column_width=True)
     st.write('CHARIT Mohamed Yassine')
+
+
+
 
 
 if __name__ == '__main__':
