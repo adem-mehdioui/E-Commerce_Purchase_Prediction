@@ -200,15 +200,15 @@ st.markdown(
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.image('adem.jpg', caption='Data Analyst / Data Scientist', use_column_width=True)
+    st.image('members_photos/adem.jpg', caption='Data Analyst / Data Scientist', use_column_width=True)
     st.write('MEHDIOUI Mohamed Adem')
 
 with col2:
-    st.image('soulayman.jpg', caption='Data Analyst / Data Scientist', use_column_width=True)
+    st.image('members_photos/soulayman.jpg', caption='Data Analyst / Data Scientist', use_column_width=True)
     st.write('EL GUASMI Soulaymane')
 
 with col3:
-    st.image('yassine.jpg', caption='Coordinateur de Projet', use_column_width=True)
+    st.image('members_photos/yassine.jpg', caption='Coordinateur de Projet', use_column_width=True)
     st.write('CHARIT Mohamed Yassine')
 
 
